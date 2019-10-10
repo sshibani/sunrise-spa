@@ -1,5 +1,5 @@
 import gql from 'graphql-tag';
-import BASIC_CUSTOMER_QUERY from '../components/BasicCustomer.gql';
+import BASIC_CUSTOMER_QUERY from './BasicCustomer.gql';
 
 export default {
   methods: {
@@ -20,6 +20,24 @@ export default {
         variables: {
           version: this.me.customer?.version,
           actions,
+        },
+      });
+    },
+
+    updateMyCustomerPassword(currentPassword, newPassword) {
+      return this.$apollo.mutate({
+        mutation: gql`
+          mutation changePassword($version: Long!, $currentPassword: String!, $newPassword: String!) {
+            customerChangeMyPassword(version: $version, currentPassword: $currentPassword, newPassword: $newPassword) {
+              id
+              version
+              email
+            }
+          }`,
+        variables: {
+          version: this.me.customer?.version,
+          currentPassword,
+          newPassword,
         },
       });
     },

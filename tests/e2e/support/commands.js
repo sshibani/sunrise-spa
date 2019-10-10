@@ -38,6 +38,33 @@ Cypress.Commands.add('login', customer => cy.createCustomer(customer).then(() =>
   cy.get('[data-test=login-form-submit]').click();
 }));
 
+Cypress.Commands.add('checkCustomerIsLoggedIn', (customer) => {
+  cy.get('[data-test=user-profile-name]').should('contain', `${customer.firstName} ${customer.lastName}`);
+  cy.get('[data-test=user-profile-email]').should('contain', customer.email);
+
+  cy.get('[data-test=login-button]').should('not.exist');
+  cy.get('[data-test=logout-button]').should('exist');
+  cy.get('[data-test=login-info-name]').should('contain', customer.firstName);
+});
+
+Cypress.Commands.add('changeLanguage', (language) => {
+  cy.get('[data-test=location-selector-open-button]').click();
+  cy.get('span[data-test=language-selector-dropdown]')
+    .click()
+    .parent()
+    .contains(language)
+    .click();
+});
+
+Cypress.Commands.add('changeCountry', (country) => {
+  cy.get('[data-test=location-selector-open-button]').click();
+  cy.get('span[data-test=country-selector-dropdown]')
+    .click()
+    .parent()
+    .contains(country)
+    .click();
+});
+
 Cypress.Commands.add('createCustomer', draft => cy.wrap(clientPromise
   .then(client => mutation.deleteCustomer(client, draft.email)
     .then(() => mutation.createCustomer(client, draft)))));
@@ -70,3 +97,7 @@ Cypress.Commands.add('createOrder', (cartDraft, orderDraft) => cy.wrap(clientPro
         const draft = Object.assign({}, orderDraft, { id: cart.id, version: cart.version });
         return mutation.createOrder(client, draft);
       })))));
+
+Cypress.Commands.add('addProduct', draft => cy.wrap(clientPromise
+  .then(client => mutation.deleteProduct(client, draft.key)
+    .then(() => mutation.createProduct(client, draft)))));
