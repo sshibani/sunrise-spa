@@ -72,7 +72,8 @@ export default {
     matchingShippingRate(shippingMethod) {
       return shippingMethod.zoneRates
         .map(zoneRate => zoneRate.shippingRates
-          .find(shippingRate => shippingRate.isMatching))[0];
+          .find(shippingRate => shippingRate.isMatching))
+        .filter(n => n)[0];
     },
 
     isFree(shippingRate) {
